@@ -1,5 +1,11 @@
 # Drupal
 
+## Implementations
+
+If you'd like to test this stack, have a look at the ClickStarts that implement it:
+
+####[Openfolio](https://github.com/benjaminsavoy/openfolio-clickstart)
+
 ## About
 
 This stack installs and serves your drupal installations, easily.
@@ -9,7 +15,7 @@ To start with this stack, follow those steps:
 - Copy sites/default/default.settings.php to sites/default/settings.php
 - Add your database configuration (Sample below)
 - Add a random hashsalt (Optional)
-- Zip your modified drupal up again (e.g., zip -r MY_PACKAGE.zip *)
+- Zip your modified drupal up again (e.g., zip -r MY_PACKAGE.zip .)
 - Deploy to cloudbees with those parameters:
     
         bees app:deploy -a MY_APP -t drupal \
@@ -44,6 +50,10 @@ Then, change your $databases array in settings.php to something like:
 
 You may of course change the alias 'binding', but make sure that it is in uppercase in the database configuration.
 
-## TODO:
+## More info
 
-Allowing for double quotes in password
+###[PHP Core plugin](https://github.com/benjaminsavoy/php-core)
+
+## License
+
+This work is distributed under the Apache license, found in the LICENSE file.
