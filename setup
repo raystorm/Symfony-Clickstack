@@ -1,0 +1,22 @@
+set -u
+set -e
+
+. "$plugin_dir/php/functions"
+. "$plugin_dir/functions"
+
+# Creates the base of the app
+create_app_skel
+init_vars
+parse_envfile
+
+# Installs everything
+install_php
+install_httpd
+install_drush
+install_newrelic
+export_paths "php httpd drush"
+install_app
+install_drupal
+
+# Writes control files
+write_control

@@ -1,0 +1,7 @@
+/s3cfg
+/pkg
+/lib
+/tmp
+/php
+/drupal-plugin.zip
+.DS_Store

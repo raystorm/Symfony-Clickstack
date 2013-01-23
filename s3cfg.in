@@ -1,0 +1,12 @@
+# S3 configuration
+#
+# This file specifies the values used by s3cmd to publish the plugin
+# package to S3.
+#
+# Refer to http://s3tools.org/s3cmd for details abut s3cmd.
+
+[default]
+access_key = REPLACE-WITH-AWS-ACCESS-KEY
+secret_key = REPLACE-WITH-AWS-SECRET-KEY
+bucket_location = US
+use_https = True
