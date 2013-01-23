@@ -19,4 +19,5 @@ php_core_gitrepo = git://github.com/benjaminsavoy/php-core.git
 
 php:
 	git clone $(php_core_gitrepo) php
+	rm -rf php/.git*
 	cd php; make

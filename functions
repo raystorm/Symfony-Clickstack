@@ -7,7 +7,7 @@ install_drush() {
 install_drupal() {
     if [ -e "$app_dir/lib/newrelic-php" ]; then
         echo "Writing framework to NewRelic configuration"
-        echo "newrelic.framework=drupal" >> "$app_dir/conf/php.ini"
+        echo "newrelic.framework = \"drupal\"" >> "$app_dir/conf/php.ini"
     fi
 
     . "$(config_file)"
