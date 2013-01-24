@@ -7,7 +7,7 @@ base_url = http://cloudbees-clickstack.s3.amazonaws.com
 
 deps = php lib/drush-5.8.zip
 
-pkg_files = LICENSE setup functions lib php
+pkg_files = LICENSE setup functions lib conf php
 
 include plugin.mk
 

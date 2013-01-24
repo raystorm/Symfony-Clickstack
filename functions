@@ -1,21 +1,32 @@
 . "$genapp_functions/core"
 
 install_drush() {
+    echo "Installing Drush"
     unzip -q "$plugin_dir/lib/drush-5.8.zip" -d "$app_dir/lib/drush"
+
+    echo "Rewriting Drush permissions"
+    chmod -R g-w,o-rwx "$app_dir/lib/drush"
+
+    echo "Configuring Drush"
+    mkdir -p 750 "$app_dir/.drush"
+    install -m 440 "$plugin_dir/conf/drush.ini" "$app_dir/.drush/drush.ini"
 }
 
 install_drupal() {
     if [ -e "$app_dir/lib/newrelic-php" ]; then
         echo "Writing framework to NewRelic configuration"
-        echo "newrelic.framework = \"drupal\"" >> "$app_dir/conf/php.ini"
+        echo "newrelic.framework = drupal" >> "$app_dir/conf/php.ini"
     fi
 
     . "$(config_file)"
-
     echo "Installing Drupal"
+
+    export PHPRC="$HOME/.drush/drush.ini"
 
     _curdir="$PWD"
     cd "$app_dir/app"
+        drush status
+
         _name=$(metadata drupal_name "Drupal@CloudBees")
         _username=$(metadata drupal_user "admin")
         _password=$(metadata drupal_pass "password")
@@ -31,16 +42,17 @@ install_drupal() {
         fi
 
         echo "Rewriting permissions post-install"
-        chmod -R ugo-w,o-rx "$PWD"
+        chmod -R g-w,o-rwx "$app_dir/app"
+
         for _dir in \
         modules themes sites/default/modules sites/default/themes
         do
             if [ -e "$_dir" ]; then
-                chmod -R u+w "$_dir"
+                chmod -R g+w "$_dir"
             fi
         done
         if [ -e sites/default/files ]; then
-            chmod -R ug+w sites/default/files
+            chmod -R g+w sites/default/files
         fi
 
         echo "Checking for updates with Drush"
