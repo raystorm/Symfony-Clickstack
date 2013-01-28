@@ -35,10 +35,9 @@ install_drupal() {
 
         _sql_result=$(drush sql-query "SHOW TABLES")
         if [ "$_sql_result" == "" ]; then
-            drush --yes site-install "${_profile}" --clean-url=0 \
+            drush --yes site-install "${_profile}" --account-mail="${_mail}" \
             --account-name="${_username}" --account-pass="${_password}" \
-            --site-name="${_name}" --site-mail="${_mail}" \
-            --account-mail="${_mail}"
+            --site-name="${_name}" --site-mail="${_mail}"
         fi
 
         echo "Rewriting permissions post-install"
