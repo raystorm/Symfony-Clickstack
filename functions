@@ -1,12 +1,6 @@
 . "$genapp_functions/core"
 
-install_drush() {
-    echo "Installing Drush"
-    unzip -q "$plugin_dir/lib/drush-5.8.zip" -d "$app_dir/lib/drush"
-
-    echo "Rewriting Drush permissions"
-    chmod -R g-w,o-rwx "$app_dir/lib/drush"
-
+config_drush() {
     echo "Configuring Drush"
     mkdir -p 750 "$app_dir/.drush"
     install -m 440 "$plugin_dir/conf/drush.ini" "$app_dir/.drush/drush.ini"
@@ -18,23 +12,27 @@ install_drupal() {
         echo "newrelic.framework = drupal" >> "$app_dir/conf/php.ini"
     fi
 
-    . "$(config_file)"
-    echo "Installing Drupal"
+    echo "Writing httpd config"
+    cat "$plugin_dir/conf/httpd.head.conf" >> "$app_dir/conf/httpd.head.conf"
+    cat "$plugin_dir/conf/httpd.site.conf" >> "$app_dir/conf/httpd.site.conf"
 
+    echo "Setting up drupal"
+    . "$(config_file)"
     export PHPRC="$HOME/.drush/drush.ini"
 
     _curdir="$PWD"
     cd "$app_dir/app"
-        drush status
 
+        echo "Checking if Drupal is already installed"
         _name=$(metadata drupal_name "Drupal@CloudBees")
         _username=$(metadata drupal_user "admin")
         _password=$(metadata drupal_pass "password")
         _mail=$(metadata drupal_mail "admin@example.com")
         _profile=$(metadata drupal_profile "standard")
-
         _sql_result=$(drush sql-query "SHOW TABLES")
+
         if [ "$_sql_result" == "" ]; then
+            echo "Installing Drupal"
             drush --yes site-install "${_profile}" --account-mail="${_mail}" \
             --account-name="${_username}" --account-pass="${_password}" \
             --site-name="${_name}" --site-mail="${_mail}"
