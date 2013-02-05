@@ -14,8 +14,10 @@ install_drupal() {
     fi
 
     echo "Writing httpd config"
-    sed -i "1i$(cat "$plugin_dir/conf/httpd.head.conf")" "$app_dir/conf/httpd.head.conf"
-    sed -i "1i$(cat "$plugin_dir/conf/httpd.site.conf")" "$app_dir/conf/httpd.site.conf"
+    paste "$plugin_dir/conf/httpd.head.conf" "$app_dir/conf/httpd.head.conf" \
+    > "$app_dir/conf/httpd.head.conf"
+    paste "$plugin_dir/conf/httpd.site.conf" "$app_dir/conf/httpd.site.conf" \
+    > "$app_dir/conf/httpd.site.conf"
 
     echo "Setting up drupal"
     . "$(config_file)"

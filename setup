@@ -13,14 +13,12 @@ parse_envfile
 install_libs \
 "lib/drush-5.8;drush \
 php/lib/php-5.4.11;php \
-php/lib/httpd-2.4.3;httpd \
-php/lib/newrelic-php-3.1.5.137;newrelic-php"
+php/lib/httpd-2.4.3;httpd"
 
 # Write configuration
 config_php
 config_httpd
 config_drush
-config_newrelic
 
 # Installs app and prepares start
 install_app
