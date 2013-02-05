@@ -2,8 +2,9 @@
 
 config_drush() {
     echo "Configuring Drush"
-    mkdir -p 750 "$app_dir/.drush"
-    install -m 440 "$plugin_dir/conf/drush.ini" "$app_dir/.drush/drush.ini"
+    install -m 600 "$plugin_dir/conf/drush.ini" "$app_dir/.drushini"
+    install -m 600 "$app_dir/conf/msmtp.conf" "$app_dir/.msmtprc"
+    sed -i "2iapp_dir = $app_dir" "$app_dir/.drushini"
 }
 
 install_drupal() {
@@ -13,16 +14,15 @@ install_drupal() {
     fi
 
     echo "Writing httpd config"
-    cat "$plugin_dir/conf/httpd.head.conf" >> "$app_dir/conf/httpd.head.conf"
-    cat "$plugin_dir/conf/httpd.site.conf" >> "$app_dir/conf/httpd.site.conf"
+    sed -i "1i$(cat "$plugin_dir/conf/httpd.head.conf")" "$app_dir/conf/httpd.head.conf"
+    sed -i "1i$(cat "$plugin_dir/conf/httpd.site.conf")" "$app_dir/conf/httpd.site.conf"
 
     echo "Setting up drupal"
     . "$(config_file)"
-    export PHPRC="$HOME/.drush/drush.ini"
+    export PHPRC="$HOME/.drushini"
 
     _curdir="$PWD"
     cd "$app_dir/app"
-
         echo "Checking if Drupal is already installed"
         _name=$(metadata drupal_name "Drupal@CloudBees")
         _username=$(metadata drupal_user "admin")
@@ -57,4 +57,8 @@ install_drupal() {
             drush pm-refresh
         set -e
     cd "$_curdir"
+
+    echo "Cleaning up post-install"
+    rm -f "$app_dir/.msmtprc"
+    rm -f "$app_dir/.drushini"
 }
