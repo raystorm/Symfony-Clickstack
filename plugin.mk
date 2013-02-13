@@ -1,4 +1,37 @@
+# plugin.mk
+#
+# This file can be included in CloudBees clickstack plugin makefiles to
+# provide common build features.
+#
+
+#===================================================================
+# Variables
+#===================================================================
+
 s3cfg = s3cfg
+
+#===================================================================
+# Functions
+#===================================================================
+
+UNAME := $(shell uname)
+
+ifeq ($(UNAME),Darwin)
+    check-md5 = echo "$(2)  $(1)" | md5 -r
+else
+    check-md5 = echo "$(2)  $(1)" | md5sum --check
+endif
+
+define check-val
+  @if [ "$1" = "" ]; then \
+    echo "Missing required Makefile variable $2"; \
+    exit 1; \
+  fi
+endef
+
+#===================================================================
+# Targets
+#===================================================================
 
 all: pkg
 
@@ -40,13 +73,6 @@ s3cmd:
 	       "http://s3tools.org/s3cmd." | fold -s; \
 	  exit 1; \
 	fi
-
-define check-val
-  @if [ "$1" = "" ]; then \
-    echo "Missing required Makefile variable $2"; \
-    exit 1; \
-  fi
-endef
 
 pkg_files-var:
 	$(call check-val,$(pkg_files),pkg_files)
