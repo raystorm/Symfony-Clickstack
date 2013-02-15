@@ -5,7 +5,6 @@
 config_drush() {
     echo "Configuring Drush"
     install -m 600 "$plugin_dir/conf/drush.ini" "$app_dir/.drushini"
-    install -m 600 "$app_dir/conf/msmtp.conf" "$app_dir/.msmtprc"
     sed -i "2iapp_dir = $app_dir" "$app_dir/.drushini"
 }
 
@@ -63,6 +62,5 @@ install_drupal() {
     cd "$_curdir"
 
     echo "Cleaning up post-install"
-    rm -f "$app_dir/.msmtprc"
     rm -f "$app_dir/.drushini"
 }
