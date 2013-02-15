@@ -10,6 +10,6 @@ set -e
 . "$plugin_dir/php_setup"
 
 # Installs drupal-specific content
-install_libs "lib/drush-5.8;drush"
+install_lib "lib/drush-5.8;drush"
 config_drush
 install_drupal
