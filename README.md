@@ -4,7 +4,7 @@
 
 If you'd like to test this stack, have a look at the ClickStarts that implement it:
 
-####[Openfolio](https://github.com/benjaminsavoy/openfolio-clickstart)
+####[Openfolio](https://github.com/cloudbees-community/openfolio-clickstart)
 
 ## About
 
@@ -67,7 +67,7 @@ You may of course change the alias 'binding', but make sure that it is in upperc
 
 ## More info
 
-###[PHP Core plugin](https://github.com/benjaminsavoy/php-core)
+###[PHP ClickStack](https://github.com/cloudbees-community/php-clickstack)
 
 ## License
 
