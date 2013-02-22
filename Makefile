@@ -17,7 +17,7 @@ lib/%.zip:
 	mkdir -p lib
 	wget -qO $@ $(base_url)/$@
 
-php_core_gitrepo = git://github.com/cloudbees-community/php-clickstack.git
+php_core_gitrepo = git://github.com/CloudBees-community/php-clickstack.git
 
 php:
 	git clone $(php_core_gitrepo) php
