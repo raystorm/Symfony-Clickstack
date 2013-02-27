@@ -22,7 +22,6 @@ To start with this stack, follow those steps:
         bees app:deploy -a MY_APP -t drupal \
         -Ruser='admin' -Rpass='password' -Rname='My awesome site' \
         -Remail='admin@mydomain.com' -Rprofile='standard' \
-        -RPLUGIN.SRC.drupal='http://cloudbees-clickstack.s3.amazonaws.com/testing/drupal-plugin.zip' \
         -Rsalt='something_very_random' MY_PACKAGE.zip 
 
 
@@ -65,13 +64,9 @@ Then, change your $databases array in settings.php to something like:
         'prefix' => 'drupal_',
     );
 
-You may of course change the alias 'binding', but make sure that it is in
-uppercase in the database configuration.
-
 ## Temporary Directory
 
-It is necessary to add the following line to settings.php, should Drupal need to
-use a tmp directory:
+It is necessary to add the following line to settings.php, should Drupal need to use a tmp directory:
 
     $conf['file_temporary_path'] = getenv('TMPDIR');
 
