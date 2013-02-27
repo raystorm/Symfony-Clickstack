@@ -3,13 +3,13 @@
 set -u
 set -e
 
-. "$plugin_dir/php_functions"
+. "$plugin_dir/php/functions"
 . "$plugin_dir/functions"
 
 # Installs everything from the PHP stack
-. "$plugin_dir/php_setup"
+. "$plugin_dir/php/setup"
 
 # Installs drupal-specific content
-install_lib "lib/drush-5.8;drush"
+install_lib "drush"
 config_drush
 install_drupal

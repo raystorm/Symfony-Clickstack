@@ -39,10 +39,6 @@ Those parameters will be used only once for installation (Which is triggered if 
     pass # Administrator password
     email # Admininstrator e-mail
 
-#### Application parameters:
-
-    salt # A hash salt usable in settings.php
-
 ## Drupal Database configuration with CloudBees
 
     # Create an application and database if you didn't do so already
@@ -61,9 +57,15 @@ Then, change your $databases array in settings.php to something like:
         'password' => getenv('MYSQL_PASSWORD_BINDING'),
         'host' => getenv('MYSQL_HOST_BINDING'),
         'prefix' => 'drupal_',
-    );d
+    );
 
 You may of course change the alias 'binding', but make sure that it is in uppercase in the database configuration.
+
+## Temporary Directory
+
+It is necessary to add the following line to settings.php, should Drupal need to use a tmp directory:
+
+    $conf['file_temporary_path'] = getenv('TMPDIR');
 
 ## More info
 

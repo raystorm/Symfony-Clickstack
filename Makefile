@@ -4,24 +4,31 @@ publish_bucket = cloudbees-clickstack
 publish_repo = testing
 publish_url = s3://$(publish_bucket)/$(publish_repo)/
 
-deps = php lib/drush-5.8.zip
+# Version
+lib/drush.zip = drush-5.8.zip
 
-pkg_files = README.md LICENSE setup functions lib conf \
-	php/php_functions php/php_setup php/conf php/control php/lib
+deps = lib php lib/drush.zip
+
+pkg_files = README.md LICENSE scripts/* lib conf \
+			php/php php/conf php/control php/lib
 
 include plugin.mk
 
-base_url = http://cloudbees-clickstack.s3.amazonaws.com
+base_url = http://cloudbees-clickstack.s3.amazonaws.com/lib
+parser_repo = git://github.com/benjaminsavoy/genapp-metadata-parser.git
+php_repo = git://github.com/CloudBees-community/php-clickstack.git
+
+lib:
+	mkdir -p lib
+
+lib/parser:
+	git clone $(parser_repo) lib/parser
 
 lib/%.zip:
-	mkdir -p lib
-	wget -qO $@ $(base_url)/$@
-
-php_core_gitrepo = git://github.com/CloudBees-community/php-clickstack.git
+	wget -qO $@ $(base_url)/$($@)
 
 php:
-	git clone $(php_core_gitrepo) php
+	git clone $(php_repo) php
 	rm -rf php/.git*
-	mv php/functions php/php_functions
-	mv php/setup php/php_setup
+	mv php/scripts php/php
 	cd php; make deps
