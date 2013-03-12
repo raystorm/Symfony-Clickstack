@@ -9,8 +9,8 @@ lib/drush.zip = drush-5.8.zip
 
 deps = lib php lib/drush.zip
 
-pkg_files = README.md LICENSE scripts/* lib conf \
-			php/php php/conf php/control php/lib
+pkg_files = README.md LICENSE setup functions lib php/lib conf  \
+			php/php-setup php/conf php/control php/php-functions
 
 include plugin.mk
 
@@ -30,5 +30,6 @@ lib/%.zip:
 php:
 	git clone $(php_repo) php
 	rm -rf php/.git*
-	mv php/scripts php/php
+	mv php/functions php/php-functions
+	mv php/setup php/php-setup
 	cd php; make deps
