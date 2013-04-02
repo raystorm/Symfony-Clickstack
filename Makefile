@@ -21,9 +21,6 @@ php_repo = git://github.com/CloudBees-community/php-clickstack.git
 lib:
 	mkdir -p lib
 
-lib/parser:
-	git clone $(parser_repo) lib/parser
-
 lib/%.zip:
 	wget -qO $@ $(base_url)/$($@)
 
