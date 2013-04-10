@@ -26,7 +26,6 @@ lib/%.zip:
 
 php:
 	git clone $(php_repo) php
-	rm -rf php/.git*
 	mv php/functions php/php-functions
 	mv php/setup php/php-setup
 	cd php; make deps

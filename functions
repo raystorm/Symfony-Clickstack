@@ -4,8 +4,9 @@
 
 config_drush() {
     echo "Configuring Drush"
-    install -m 600 "$plugin_dir/conf/drush.ini" "$app_dir/.drushini"
-    sed -i "2iapp_dir = $app_dir" "$app_dir/.drushini"
+    mkdir -m 700 "$app_dir/.drushini"
+    install -m 600 "$plugin_dir/conf/drush.ini" "$app_dir/.drushini/php.ini"
+    sed -i "2iapp_dir = $app_dir" "$app_dir/.drushini/php.ini"
 }
 
 install_drupal() {
@@ -21,7 +22,9 @@ install_drupal() {
     > "$app_dir/conf/httpd.site.conf"
 
     echo "Setting up drupal"
-    . "$control_dir/config"
+    set +e
+        . "$control_dir/config"
+    set -e
     export PHPRC="$app_dir/.drushini"
 
     _curdir="$PWD"
@@ -59,5 +62,5 @@ install_drupal() {
     cd "$_curdir"
 
     echo "Cleaning up post-install"
-    rm -f "$app_dir/.drushini"
+    rm -rf "$app_dir/.drushini"
 }
