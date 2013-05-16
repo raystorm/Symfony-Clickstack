@@ -54,11 +54,6 @@ install_drupal() {
                 chmod -R g+w "$_dir"
             fi
         done
-
-        echo "Checking for updates with Drush"
-        set +e
-            drush pm-refresh
-        set -e
     cd "$_curdir"
 
     echo "Cleaning up post-install"
