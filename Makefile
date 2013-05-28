@@ -18,10 +18,6 @@ base_url = http://cloudbees-clickstack.s3.amazonaws.com/lib
 parser_repo = git://github.com/benjaminsavoy/genapp-metadata-parser.git
 php_repo = git://github.com/CloudBees-community/php-clickstack.git
 
-ifndef php_commit
-	php_commit = prod
-endif
-
 lib:
 	mkdir -p lib
 
@@ -30,7 +26,6 @@ lib/%.zip:
 
 php:
 	git clone $(php_repo) php
-	cd php; git checkout $(php_commit)
 	mv php/functions php/php-functions
 	mv php/setup php/php-setup
 	cd php; make deps
