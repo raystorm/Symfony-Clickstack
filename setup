@@ -9,7 +9,6 @@ set -e
 # Installs everything from the PHP stack
 . "$plugin_dir/php-setup"
 
-# Installs drupal-specific content
-install_lib "drush"
-config_drush
-install_drupal
+# Installs symfony-specific content
+#config_symfony
+install_symfony

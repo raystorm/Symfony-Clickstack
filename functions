@@ -2,17 +2,19 @@
 
 . "$genapp_functions/core"
 
-config_drush() {
-    echo "Configuring Drush"
-    mkdir -m 700 "$app_dir/.drushini"
-    install -m 600 "$plugin_dir/conf/drush.ini" "$app_dir/.drushini/php.ini"
-    sed -i "2iapp_dir = $app_dir" "$app_dir/.drushini/php.ini"
-}
+#config_symfony()
+#{
+#    echo "Configuring Symfony"
+#    mkdir -m 700 "$app_dir/.drushini"
+#    install -m 600 "$plugin_dir/conf/drush.ini" "$app_dir/.drushini/php.ini"
+#    sed -i "2iapp_dir = $app_dir" "$app_dir/.drushini/php.ini"
+#}
 
-install_drupal() {
+install_symfony()
+{
     if [ -e "$app_dir/plugins/newrelic" ]; then
         echo "Writing framework to NewRelic configuration"
-        echo "newrelic.framework = drupal" >> "$app_dir/conf/php.ini"
+        echo "newrelic.framework = symfony" >> "$app_dir/conf/php.ini"
     fi
 
     echo "Writing httpd config"
@@ -20,42 +22,27 @@ install_drupal() {
     > "$app_dir/conf/httpd.head.conf"
     paste "$plugin_dir/conf/drupal.site.conf" "$app_dir/conf/httpd.site.conf" \
     > "$app_dir/conf/httpd.site.conf"
+    paste "$plugin_dir/conf/symfony-php.ini" "$app_dir/conf/php.ini" \
+    > "$app_dir/conf/php.ini"
 
-    echo "Setting up drupal"
-    set +e
-        . "$control_dir/config"
-    set -e
-    export PHPRC="$app_dir/.drushini"
+    echo "Setting up symfony"
 
-    _curdir="$PWD"
-    cd "$app_dir/app"
-        echo "Checking if Drupal is already installed"
-        _name=$(metadata drupal_name Drupal@CloudBees)
-        _username=$(metadata drupal_user admin)
-        _password=$(metadata drupal_pass password)
-        _mail=$(metadata drupal_mail admin@example.com)
-        _profile=$(metadata drupal_profile standard)
-        _sql_result=$(drush sql-query "SHOW TABLES")
+    cd "$app_dir"
 
-        if [ "$_sql_result" == "" ]; then
-            echo "Installing Drupal"
-            drush --yes site-install "${_profile}" --account-mail="${_mail}" \
-            --account-name="${_username}" --account-pass="${_password}" \
-            --site-name="${_name}" --site-mail="${_mail}"
-        fi
+    echo "Rewriting permissions post-install"
+    chmod -R g-w,o-rwx "$app_dir/app"
 
-        echo "Rewriting permissions post-install"
-        chmod -R g-w,o-rwx "$app_dir/app"
+    #TODO: verify the loop will change the necessary perms.
 
-        for _dir in \
-        modules themes sites/default/modules sites/default/themes sites/default/files
-        do
-            if [ -e "$_dir" ]; then
-                chmod -R g+w "$_dir"
-            fi
-        done
+    #for _dir in \
+    #Symfony Symfony/app Symfony/app/cache Symfony/app/cache/prod Symfony/app/cache/dev Symfony/app/logs Symfony/src/* Symfony/web/*
+    #do
+    #  if [ -e "$_dir" ]; then
+    #      chmod -R g+w "$_dir"
+    #  fi
+    #done
+		
+	  chmod g+w `find . -type d`
+		
     cd "$_curdir"
-
-    echo "Cleaning up post-install"
-    rm -rf "$app_dir/.drushini"
 }

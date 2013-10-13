@@ -1,13 +1,8 @@
-plugin_name = drupal-plugin
+plugin_name = symfony-plugin
 
 publish_bucket = cloudbees-clickstack
 publish_repo = testing
 publish_url = s3://$(publish_bucket)/$(publish_repo)/
-
-# Version
-lib/drush.zip = drush-5.8.zip
-
-deps = lib php lib/drush.zip
 
 pkg_files = README.md LICENSE setup functions lib php/lib conf  \
 			php/php-setup php/conf php/control php/php-functions
