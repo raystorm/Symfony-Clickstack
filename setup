@@ -10,5 +10,6 @@ set -e
 . "$plugin_dir/php-setup"
 
 # Installs symfony-specific content
-#config_symfony
+config_symfony
 install_symfony
+

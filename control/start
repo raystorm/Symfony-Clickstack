@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+set -u
+
+control_dir="$(dirname $0)"
+set +e
+    . "$control_dir/config"
+set -e
+
+. "$control_dir/start-inserts"
+
+echo "Starting apache web server"
+#exec bash -c "httpd -k start -f $app_dir/conf/httpd.conf -D FOREGROUND"
+exec bash -c "$control_dir/start-php.sh"

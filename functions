@@ -2,13 +2,17 @@
 
 . "$genapp_functions/core"
 
-#config_symfony()
-#{
+config_symfony()
+{
 #    echo "Configuring Symfony"
 #    mkdir -m 700 "$app_dir/.drushini"
 #    install -m 600 "$plugin_dir/conf/drush.ini" "$app_dir/.drushini/php.ini"
 #    sed -i "2iapp_dir = $app_dir" "$app_dir/.drushini/php.ini"
-#}
+
+#	install -m 550 "$plugin_dir/control/start-php.sh" "$control_dir/start-php.sh"
+	cp "$plugin_dir/lib/libpng15.so.15" "$app_dir/lib/"
+	cp "$plugin_dir/lib/libjpeg.so.62" "$app_dir/lib/"
+}
 
 install_symfony()
 {
@@ -18,12 +22,28 @@ install_symfony()
     fi
 
     echo "Writing httpd config"
-    paste "$plugin_dir/conf/drupal.head.conf" "$app_dir/conf/httpd.head.conf" \
+    paste "$plugin_dir/conf/symfony.head.conf" "$app_dir/conf/httpd.head.conf" \
     > "$app_dir/conf/httpd.head.conf"
-    paste "$plugin_dir/conf/drupal.site.conf" "$app_dir/conf/httpd.site.conf" \
+    paste "$plugin_dir/conf/symfony.site.conf" "$app_dir/conf/httpd.site.conf" \
     > "$app_dir/conf/httpd.site.conf"
-    paste "$plugin_dir/conf/symfony-php.ini" "$app_dir/conf/php.ini" \
+    paste "$plugin_dir/conf/symfony-php.ini"   "$app_dir/conf/php.ini" \
     > "$app_dir/conf/php.ini"
+
+    echo "modifying httpd config for deployment"
+    sed -i 's%${applicationName}%'"$app_id"'%g' "$app_dir/conf/httpd.head.conf" 
+    sed -i 's%${account}%'"$app_user"'%g'       "$app_dir/conf/httpd.head.conf" 
+    sed -i 's%${app_dir}%'"$app_dir"'%g'        "$app_dir/conf/httpd.head.conf" 
+    sed -i 's%${pkg_dir}%'"$pkg_dir"'%g'        "$app_dir/conf/httpd.head.conf" 
+    sed -i 's%${log_dir}%'"$log_dir"'%g'        "$app_dir/conf/httpd.head.conf" 
+    sed -i 's%${app_port}%'"$app_port"'%g'      "$app_dir/conf/httpd.head.conf" 
+    sed -i 's%${applicationName}%'"$app_id"'%g' "$app_dir/conf/httpd.site.conf" 
+    sed -i 's%${account}%'"$app_user"'%g'       "$app_dir/conf/httpd.site.conf" 
+    sed -i 's%${applicationName}%'"$app_id"'%g' "$app_dir/conf/php.ini" 
+    sed -i 's%${account}%'"$app_user"'%g'       "$app_dir/conf/php.ini" 
+    sed -i 's%${log_dir}%'"$log_dir"'%g'        "$app_dir/conf/php.ini" 
+    sed -i 's%${pkg_dir}%'"$pkg_dir"'%g'        "$app_dir/conf/php.ini" 
+    #sed -i 's%${max_post}%'"$max_post"'%g'      "$app_dir/conf/php.ini" 
+    #sed -i 's%${default_basedir}%'"$default_basedir"'%g'      "$app_dir/conf/php.ini" 
 
     echo "Setting up symfony"
 
@@ -31,7 +51,27 @@ install_symfony()
 
     echo "Rewriting permissions post-install"
     chmod -R g-w,o-rwx "$app_dir/app"
+    chmod -R g-w,o-rwx "$pkg_dir/app"
 
+    echo "app dir"
+    ls -l $app_dir
+    echo "package dir"
+    ls -l $pkg_dir
+    echo "app/lib"
+    ls -l $app_dir/lib
+
+
+    chmod -R g-w,o-rwx "$pkg_dir/web"
+
+    echo "updating permissions ACLS"
+    rm -rf "$pkg_dir/app/logs/"
+    mkdir "$pkg_dir/app/logs/"
+    rm -rf "$pkg_dir/app/cache/"
+    mkdir "$pkg_dir/app/cache/"
+   
+    setfacl -R -m u:"$app_user":rwX "$pkg_dir/app/cache" "$pkg_dir/app/logs"
+    setfacl -dR -m u:"$app_user":rwX "$pkg_dir/app/cache" "$pkg_dir/app/logs"
+    
     #TODO: verify the loop will change the necessary perms.
 
     #for _dir in \
@@ -42,7 +82,33 @@ install_symfony()
     #  fi
     #done
 		
-	  chmod g+w `find . -type d`
+	#chmod g+w `find . -type d`
+
+	#chmod -R g+w app/cache
+	#chmod -R g+w app/logs
 		
-    cd "$_curdir"
+    #cd "$_curdir"
+
+    #unzip $app_dir/php/lib/php.zip
+    
+    echo "Adding Libraries"
+    LD_LIBRARY_PATH=$app_dir/lib/:/usr/local/lib/:/usr/lib/
+    PATH=\$PATH:\$LD_LIBRARY_PATH
+    echo "LD_LIBRARY_PATH - '$LD_LIBRARY_PATH'"
+    #cp "$plugin_dir/lib/libpng15.so.15" "/usr/local/lib/" 
+    export LD_LIBRARY_PATH=$app_dir/lib/:\$LD_LIBRARY_PATH 
+    #export PATH=\$PATH:\$LD_LIBRARY_PATH
+    echo "-----------------------------------------"
+
+    echo "Before check.php"
+    #$app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" $pkg_dir/app/check.php
+    echo "After check.php" 
+
+    echo "Symfony deploy tasks"
+    pushd $pkg_dir
+    $app_dir/lib/php/bin/php app/console cache:clear --env=prod --no-debug
+    $app_dir/lib/php/bin/php app/console assetic:dump --env=prod --no-debug
+
+    $app_dir/lib/php/bin/php app/console assets:install --env=prod --no-debug
+    popd
 }

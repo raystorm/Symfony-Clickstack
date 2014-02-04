@@ -3,6 +3,6 @@
 /lib
 /tmp
 /php
-/drupal-plugin.zip
 .DS_Store
 .idea/
+symfony-plugin.zip

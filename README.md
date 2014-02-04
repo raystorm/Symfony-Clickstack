@@ -15,8 +15,14 @@ To start with this stack, follow those steps:
 
 - Create a Symfony Application as normal  
   (download, composer, etc)  
+- prepare the application to be deployed
+
+        php ../composer.phar install --no-dev --optimize-autoloader
+
+  other common deployment steps are handled by this clickstack at deployment time on the server.
+
 - Zip the contents of your Symfony Application Directory  
-  Typically: "framework-standard-edition"  
+  Typically: "framework-standard-edition"
   (e.g., `zip -r MY_PACKAGE.zip .`)
 - Update Monolog configuration (details below)
 - Deploy to Cloudbees:
@@ -32,9 +38,18 @@ Then the Stack will install everything for you, and you should land on the Symfo
 
 ### MonoLog  
 
-Update monolog to log information to Stdout.  
+Update monolog to log information to Stdout and/or Stderr
 
-**TODO:** Update with instructions.
+   monolog:
+     handlers:
+       stdout:
+         type:  stream
+         path:  "php://stdout"
+         level: debug
+       stderr: 
+         type:  stream
+         path:  "php://stderr"
+         level: warning        
 
 
 ## More info
