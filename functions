@@ -7,11 +7,31 @@ config_symfony()
 #    echo "Configuring Symfony"
 #    mkdir -m 700 "$app_dir/.drushini"
 #    install -m 600 "$plugin_dir/conf/drush.ini" "$app_dir/.drushini/php.ini"
-#    sed -i "2iapp_dir = $app_dir" "$app_dir/.drushini/php.ini"
+#    sed -i "$app_dir = $app_dir" "$app_dir/.drushini/php.ini"
 
 #	install -m 550 "$plugin_dir/control/start-php.sh" "$control_dir/start-php.sh"
 	cp "$plugin_dir/lib/libpng15.so.15" "$app_dir/lib/"
-	cp "$plugin_dir/lib/libjpeg.so.62" "$app_dir/lib/"
+	cp "$plugin_dir/lib/libjpeg.so.62"  "$app_dir/lib/"
+        
+	cp "$plugin_dir/modules/curl.a"       "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/curl.la"      "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/curl.so"      "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/gmp.a"        "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/gmp.la"       "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/gmp.so"       "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/mbstring.a"   "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/mbstring.la"  "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/mbstring.so"  "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/openssl.a"    "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/openssl.la"   "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/openssl.so"   "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/pdo_mysql.a"  "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/pdo_mysql.la" "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/pdo_mysql.so" "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/zip.so"       "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/soap.a"  "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/soap.la" "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/soap.so" "$app_dir/lib/php/modules/" 
 }
 
 install_symfony()
@@ -42,6 +62,7 @@ install_symfony()
     sed -i 's%${account}%'"$app_user"'%g'       "$app_dir/conf/php.ini" 
     sed -i 's%${log_dir}%'"$log_dir"'%g'        "$app_dir/conf/php.ini" 
     sed -i 's%${pkg_dir}%'"$pkg_dir"'%g'        "$app_dir/conf/php.ini" 
+    #sed -i 's%${app_dir}%'"$pkg_dir"'%g'        "$app_dir/conf/php.ini" 
     #sed -i 's%${max_post}%'"$max_post"'%g'      "$app_dir/conf/php.ini" 
     #sed -i 's%${default_basedir}%'"$default_basedir"'%g'      "$app_dir/conf/php.ini" 
 
@@ -52,6 +73,7 @@ install_symfony()
     echo "Rewriting permissions post-install"
     chmod -R g-w,o-rwx "$app_dir/app"
     chmod -R g-w,o-rwx "$pkg_dir/app"
+    chmod -R g-w,o-rwx "$pkg_dir/web"
 
     echo "app dir"
     ls -l $app_dir
@@ -59,37 +81,18 @@ install_symfony()
     ls -l $pkg_dir
     echo "app/lib"
     ls -l $app_dir/lib
+    echo "Available PHP modules"
+    ls -l "${app_dir}/lib/php/modules"
 
-
-    chmod -R g-w,o-rwx "$pkg_dir/web"
-
-    echo "updating permissions ACLS"
+    echo "ensuring necessary directorys get created"
     rm -rf "$pkg_dir/app/logs/"
-    mkdir "$pkg_dir/app/logs/"
+    mkdir  "$pkg_dir/app/logs/"
     rm -rf "$pkg_dir/app/cache/"
-    mkdir "$pkg_dir/app/cache/"
+    mkdir  "$pkg_dir/app/cache/"
    
-    setfacl -R -m u:"$app_user":rwX "$pkg_dir/app/cache" "$pkg_dir/app/logs"
+    echo "updating permissions ACLS"
+    setfacl -R  -m u:"$app_user":rwX "$pkg_dir/app/cache" "$pkg_dir/app/logs"
     setfacl -dR -m u:"$app_user":rwX "$pkg_dir/app/cache" "$pkg_dir/app/logs"
-    
-    #TODO: verify the loop will change the necessary perms.
-
-    #for _dir in \
-    #Symfony Symfony/app Symfony/app/cache Symfony/app/cache/prod Symfony/app/cache/dev Symfony/app/logs Symfony/src/* Symfony/web/*
-    #do
-    #  if [ -e "$_dir" ]; then
-    #      chmod -R g+w "$_dir"
-    #  fi
-    #done
-		
-	#chmod g+w `find . -type d`
-
-	#chmod -R g+w app/cache
-	#chmod -R g+w app/logs
-		
-    #cd "$_curdir"
-
-    #unzip $app_dir/php/lib/php.zip
     
     echo "Adding Libraries"
     LD_LIBRARY_PATH=$app_dir/lib/:/usr/local/lib/:/usr/lib/
@@ -99,16 +102,34 @@ install_symfony()
     export LD_LIBRARY_PATH=$app_dir/lib/:\$LD_LIBRARY_PATH 
     #export PATH=\$PATH:\$LD_LIBRARY_PATH
     echo "-----------------------------------------"
+    #echo "PHP.ini"
+    #echo "-----------------------------------------"
+    #/usr/bin/cat  "$app_dir/conf/php.ini"
+    #echo "-----------------------------------------"
+    #echo "PHP phpinfo();"
+    #echo "-----------------------------------------"
+    $app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" -i 
 
     echo "Before check.php"
-    #$app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" $pkg_dir/app/check.php
+    echo "-----------------------------------------"
+    $app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" $pkg_dir/app/check.php
+    echo "-----------------------------------------"
     echo "After check.php" 
+    echo "-----------------------------------------"
+
+    echo "Before checking for successful Zip install"
+    echo "-----------------------------------------"
+    $app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" -r "new ZipArchive();" 
+    echo "-----------------------------------------"
+
+    #uncomment to force an error and check all this output
+    #LD_LIBRARY_PATH=""
 
     echo "Symfony deploy tasks"
     pushd $pkg_dir
-    $app_dir/lib/php/bin/php app/console cache:clear --env=prod --no-debug
-    $app_dir/lib/php/bin/php app/console assetic:dump --env=prod --no-debug
+    $app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" app/console cache:clear    --env=prod --no-debug --quiet
+    $app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" app/console assetic:dump   --env=prod --no-debug --quiet
 
-    $app_dir/lib/php/bin/php app/console assets:install --env=prod --no-debug
+    $app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" app/console assets:install --env=prod --no-debug --quiet
     popd
 }

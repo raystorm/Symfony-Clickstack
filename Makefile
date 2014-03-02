@@ -4,7 +4,7 @@ publish_bucket = cloudbees-clickstack
 publish_repo = testing
 publish_url = s3://$(publish_bucket)/$(publish_repo)/
 
-pkg_files = README.md LICENSE setup functions lib php/lib conf control \
+pkg_files = README.md LICENSE setup functions lib php/lib conf control modules \
 		php/php-setup php/conf php/control php/php-functions
 
 include plugin.mk

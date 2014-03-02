@@ -10,6 +10,7 @@ set -e
 . "$plugin_dir/php-setup"
 
 # Installs symfony-specific content
+install_libs "zlib"
 config_symfony
 install_symfony
 
