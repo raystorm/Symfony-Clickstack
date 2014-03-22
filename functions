@@ -13,25 +13,27 @@ config_symfony()
 	cp "$plugin_dir/lib/libpng15.so.15" "$app_dir/lib/"
 	cp "$plugin_dir/lib/libjpeg.so.62"  "$app_dir/lib/"
         
-	cp "$plugin_dir/modules/curl.a"       "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/curl.la"      "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/curl.so"      "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/gmp.a"        "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/gmp.la"       "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/gmp.so"       "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/mbstring.a"   "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/mbstring.la"  "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/mbstring.so"  "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/openssl.a"    "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/openssl.la"   "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/openssl.so"   "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/pdo_mysql.a"  "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/pdo_mysql.la" "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/pdo_mysql.so" "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/zip.so"       "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/soap.a"  "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/soap.la" "$app_dir/lib/php/modules/" 
-	cp "$plugin_dir/modules/soap.so" "$app_dir/lib/php/modules/" 
+	cp "$plugin_dir/modules/curl.a"       "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/curl.la"      "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/curl.so"      "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/gmp.a"        "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/gmp.la"       "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/gmp.so"       "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/mbstring.a"   "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/mbstring.la"  "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/mbstring.so"  "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/openssl.a"    "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/openssl.la"   "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/openssl.so"   "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/pdo_mysql.a"  "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/pdo_mysql.la" "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/pdo_mysql.so" "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/zip.so"       "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/soap.a"       "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/soap.la"      "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/soap.so"      "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/mongo.la"     "$app_dir/lib/php/modules/"
+	cp "$plugin_dir/modules/mongo.so"     "$app_dir/lib/php/modules/"
 }
 
 install_symfony()
@@ -122,14 +124,21 @@ install_symfony()
     $app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" -r "new ZipArchive();" 
     echo "-----------------------------------------"
 
+    #echo "Before checking for successful Mongo install"
+    #echo "-----------------------------------------"
+    #$app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" -r "new MongoClient();" 
+    #echo "-----------------------------------------"
+
     #uncomment to force an error and check all this output
     #LD_LIBRARY_PATH=""
 
     echo "Symfony deploy tasks"
     pushd $pkg_dir
+    echo "Clearing Symfony cache"
     $app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" app/console cache:clear    --env=prod --no-debug --quiet
+    echo "Dumping Symfony assets"
     $app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" app/console assetic:dump   --env=prod --no-debug --quiet
-
+    echo "Installing Symfony assets"
     $app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" app/console assets:install --env=prod --no-debug --quiet
     popd
 }
