@@ -99,9 +99,6 @@ install_symfony()
     
     #install_tests()
 
-    #uncomment to force an error and check all this output
-    #LD_LIBRARY_PATH=""
-
     echo "Symfony deploy tasks"
     pushd $pkg_dir
     echo "Clearing Symfony cache"
@@ -111,6 +108,9 @@ install_symfony()
     echo "Installing Symfony assets"
     $app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" app/console assets:install --env=prod --no-debug --quiet
     popd
+
+    #uncomment to force an error and check all this output
+    #LD_LIBRARY_PATH=""
 }
 
 #print Information for Debugging directory contents
@@ -136,6 +136,7 @@ install_tests()
     #echo "-----------------------------------------"
     #echo "PHP phpinfo();"
     #echo "-----------------------------------------"
+		
     $app_dir/lib/php/bin/php -c "$app_dir/conf/php.ini" -i 
 
     echo "Before check.php"
